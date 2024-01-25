@@ -7,7 +7,7 @@ import fetch
 
 year = 2023
 gp = "Bahrain"
-sessions = ["FP2"]
+sessions = ["FP1"]
 
 test_session = fetch.get_session_data(year, gp, sessions)
 
@@ -27,5 +27,5 @@ for driver in drivers:
 plt.bar(driver_labels, speeds)
 plt.xlabel("Drivers")
 plt.ylabel("Max Speed Trap (kmh)")
-plt.title("Saudi Arabian GP FP2 Speed Traps")
+plt.title("Saudi Arabian GP FP1 Speed Traps")
 plt.show()
