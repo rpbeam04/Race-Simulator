@@ -14,7 +14,7 @@ import numpy as np
 import fastf1
 
 
-session = fastf1.get_session(2023, 'Silverstone', 'Q')
+session = fastf1.get_session(2023, 'Bahrain', 'Q')
 session.load()
 
 lap = session.laps.pick_fastest()

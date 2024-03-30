@@ -14,19 +14,17 @@ import fastf1.plotting
 ###############################################################################
 # Load the race session
 
-session = fastf1.get_session(2022, "Hungary", 'R')
+session = fastf1.get_session(2024, "Jeddah", 'FP3')
 session.load()
 laps = session.laps
 
 ###############################################################################
 # Get the list of driver numbers
 drivers = session.drivers
-print(drivers)
 
 ###############################################################################
 # Convert the driver numbers to three letter abbreviations
 drivers = [session.get_driver(driver)["Abbreviation"] for driver in drivers]
-print(drivers)
 
 ###############################################################################
 # We need to find the stint length and compound used
@@ -42,12 +40,11 @@ stints = stints.count().reset_index()
 # The number in the LapNumber column now stands for the number of observations
 # in that group aka the stint length.
 stints = stints.rename(columns={"LapNumber": "StintLength"})
-print(stints)
 
 ###############################################################################
 # Now we can plot the strategies for each driver
-fig, ax = plt.subplots(figsize=(5, 10))
-
+fig, ax = plt.subplots(figsize=(10, 8))
+fig.set_facecolor("silver")
 for driver in drivers:
     driver_stints = stints.loc[stints["Driver"] == driver]
 
@@ -58,10 +55,12 @@ for driver in drivers:
         plt.barh(
             y=driver,
             width=row["StintLength"],
+            height=0.3,
             left=previous_stint_end,
             color=fastf1.plotting.COMPOUND_COLORS[row["Compound"]],
             edgecolor="black",
-            fill=True
+            fill=True,
+            linewidth=1
         )
 
         previous_stint_end += row["StintLength"]
@@ -70,8 +69,9 @@ for driver in drivers:
 
 ###############################################################################
 # Make the plot more readable and intuitive
-plt.title("2022 Hungarian Grand Prix Strategies")
-plt.xlabel("Lap Number")
+ax.set_facecolor("silver")
+plt.title("Strategies")
+plt.xlabel("Lap")
 plt.grid(False)
 # invert the y-axis so drivers that finish higher are closer to the top
 ax.invert_yaxis()

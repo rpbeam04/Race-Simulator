@@ -1,0 +1,43 @@
+{
+    "Name": "Circuit Test",
+    "Length": 3.00,
+    "City": "London",
+    "State": null,
+    "Country": "United Kingdom",
+    "Corners": 12,
+    "Attributes": {
+        "Overtaking": 0.5,
+        "Abrasiveness": 0.5,
+        "DRS": 2,
+        "Banking": 18,
+        "BankingType": "Standard",
+        "OvalType": "Intermediate"
+    },
+    "Climate": {
+        "Winter": {
+            "Precipitation": 0.15,
+            "DayTemp": 5,
+            "NightTemp": -2
+        },
+        "Spring": {
+            "Precipitation": 0.1,
+            "DayTemp": 15,
+            "NightTemp": 8
+        },
+        "Summer": {
+            "Precipitation": 0.05,
+            "DayTemp": 25,
+            "NightTemp": 16
+        },
+        "Fall": {
+            "Precipitation": 0.1,
+            "DayTemp": 17,
+            "NightTemp": 10
+        }
+    },
+    "PitLane": {
+        "Length": 500,
+        "Speed": 60,
+        "TimeLoss": 20
+    }
+}

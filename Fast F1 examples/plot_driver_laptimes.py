@@ -17,14 +17,18 @@ fastf1.plotting.setup_mpl(misc_mpl_mods=False)
 ###############################################################################
 # Load the race session.
 
-race = fastf1.get_session(2023, "Azerbaijan", 'R')
+race = fastf1.get_session(2024, "Jeddah", 'Q')
 race.load()
 
 ###############################################################################
 # Get all the laps for a single driver.
 # Filter out slow laps as they distort the graph axis.
 
-driver_laps = race.laps.pick_driver("ALO").pick_quicklaps().reset_index()
+drivers_plot = ["ALO","VER","PER","LEC","BEA"]
+dp_laps = []
+for driver in drivers_plot:
+    data = race.laps.pick_driver(driver).pick_quicklaps(1.09).reset_index()
+    dp_laps.append(data)
 
 ###############################################################################
 # Make the scattterplot using lap number as x-axis and lap time as y-axis.
@@ -34,15 +38,23 @@ driver_laps = race.laps.pick_driver("ALO").pick_quicklaps().reset_index()
 
 fig, ax = plt.subplots(figsize=(8, 8))
 
-sns.scatterplot(data=driver_laps,
-                x="LapNumber",
-                y="LapTime",
-                ax=ax,
-                hue="Compound",
-                palette=fastf1.plotting.COMPOUND_COLORS,
-                s=80,
-                linewidth=0,
-                legend='auto')
+driver_colors = {abv: fastf1.plotting.DRIVER_COLORS[driver] for abv,
+                 driver in fastf1.plotting.DRIVER_TRANSLATE.items()}
+driver_colors["OCO"] = "#ff5bd7"
+driver_colors["GAS"] = "#cd1b97"
+driver_colors["ZHO"] = "#32B232"
+driver_colors["BOT"] = "#62F262"
+
+for laps in dp_laps:
+    sns.scatterplot(data=laps,
+                    x="LapNumber",
+                    y="LapTime",
+                    ax=ax,
+                    hue="Driver",
+                    palette=driver_colors,
+                    s=50,
+                    linewidth=0,
+                    legend='auto')
 # sphinx_gallery_defer_figures
 
 ###############################################################################
@@ -53,7 +65,7 @@ ax.set_ylabel("Lap Time")
 # The y-axis increases from bottom to top by default
 # Since we are plotting time, it makes sense to invert the axis
 ax.invert_yaxis()
-plt.suptitle("Alonso Laptimes in the 2023 Azerbaijan Grand Prix")
+plt.suptitle("Bahrain 2024 FP2 Laptimes")
 
 # Turn on major grid lines
 plt.grid(color='w', which='major', axis='both')

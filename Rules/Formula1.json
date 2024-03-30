@@ -1,0 +1,33 @@
+{
+    "Name": "Formula 1",
+    "ShortName": "F1",
+    "Type": "Single Seater",
+    "Stock": false,
+    "Teams": true,
+    "Rules": {
+        "Start": "standing",
+        "StartFile": "double",
+        "Refueling": false,
+        "MandatoryPit": true,
+        "MandatoryTire": 2,
+        "IntermediateTire": true,
+        "WetTire": true,
+        "MandatoryTireInWet": false,
+        "YellowFlag": {
+            "SafetyCar": true,
+            "VirtualSafetyCar": true,
+            "SafetyCarRestartFile": "single", 
+            "SafetyCarSpeed": 100
+        },
+        "RedFlag": {
+            "RedFlagRestart": "standing",
+            "RedFlagRestartFile": "double",
+            "AdjustmentsPermitted": true
+        },
+        "Penalties": {
+            "PitSpeeding": true,
+            "TrackLimits": true,
+            "Contact": true
+        }
+    }
+}
