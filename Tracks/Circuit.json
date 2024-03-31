@@ -1,6 +1,7 @@
 {
     "Name": "Circuit Test",
     "Length": 3.00,
+    "Type": "Circuit",
     "City": "London",
     "State": null,
     "Country": "United Kingdom",
@@ -9,9 +10,10 @@
         "Overtaking": 0.5,
         "Abrasiveness": 0.5,
         "DRS": 2,
-        "Banking": 18,
-        "BankingType": "Standard",
-        "OvalType": "Intermediate"
+        "Banking": 0,
+        "BankingType": null,
+        "OvalType": null,
+        "LongestStraight": 1100
     },
     "Climate": {
         "Winter": {

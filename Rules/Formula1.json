@@ -13,6 +13,9 @@
         "IntermediateTire": true,
         "WetTire": true,
         "MandatoryTireInWet": false,
+        "DRS": true,
+        "RaceInWet": true,
+        "OvalsInWet": true,
         "YellowFlag": {
             "SafetyCar": true,
             "VirtualSafetyCar": true,

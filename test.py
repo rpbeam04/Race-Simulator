@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np 
 import matplotlib.pyplot as plt
 from pprint import * 
-import fetch
+import fetch as fetch
 
 year = 2023
 gp = "Bahrain"
