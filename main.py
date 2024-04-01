@@ -22,14 +22,19 @@ rules = setup.load_rules("dev")
 
 # Race Simulation
 race = SimRace(drivers, track, rules, 50)
-race.qualify(display=True)
+race.qualify()
+for driver in race.Drivers:
+    print(f"{driver.Name}\t{driver.MeanTime}")
 race.start()
 for i in range(race.Laps-1):
     race.simulate_lap()
+print("Overtakes: ", race.Overtakes)
 
 plt.figure(figsize=(12,7))
 for driver in race.Drivers:
-    plt.plot(race.times_to_leader(driver))
+    plt.plot(race.times_to_mean(driver))
 plt.title("Race Simulation")
-plt.legend([driver.Name for driver in race.Drivers])
+plt.legend([driver.Name for driver in race.Drivers], loc='upper left', bbox_to_anchor=(1, 1))
+plt.xlabel("Lap")
+plt.ylabel("Gap to Mean (sec)")
 plt.show()

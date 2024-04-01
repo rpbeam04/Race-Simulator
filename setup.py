@@ -10,6 +10,11 @@ class SimDriver():
         self.LapTimes: list = []
         self.LapPositions: list = []
 
+    def RaceTime(self, i=0):
+        if i > 0:
+            return sum(self.LapTimes[:-i])
+        return sum(self.LapTimes)
+
 def load_presets(_type: str):
     return os.listdir(fr"{_type.capitalize()}")
 

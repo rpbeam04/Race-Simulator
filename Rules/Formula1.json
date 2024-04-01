@@ -4,6 +4,7 @@
     "Type": "Single Seater",
     "Stock": false,
     "Teams": true,
+    "FollowTime": 0.2,
     "Rules": {
         "Start": "standing",
         "StartFile": "double",
