@@ -9,6 +9,7 @@ class SimDriver():
         self.Number = number
         self.LapTimes: list = []
         self.LapPositions: list = []
+        self.DNF = False
 
     def RaceTime(self, i=0):
         if i > 0:
@@ -28,7 +29,7 @@ def load_drivers(method: str, ident: str | None = None):
     if method == "preset":
         return match_preset(ident)
     elif method == "dev":
-        data = pd.read_csv("Drivers/drivertest.csv").loc[:9]
+        data = pd.read_csv("Drivers/drivertest.csv")#.loc[:9]
         drivers = []
         for _,row in data.iterrows():
             driver = SimDriver(row["Name"], row["Number"])

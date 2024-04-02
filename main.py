@@ -5,6 +5,7 @@
 from sim import SimRace
 import setup
 import matplotlib.pyplot as plt
+from pprint import pprint
 
 # Setup
 """
@@ -21,20 +22,60 @@ track = setup.load_track("dev")
 rules = setup.load_rules("dev")
 
 # Race Simulation
-race = SimRace(drivers, track, rules, 50)
-race.qualify()
-for driver in race.Drivers:
-    print(f"{driver.Name}\t{driver.MeanTime}")
-race.start()
-for i in range(race.Laps-1):
-    race.simulate_lap()
-print("Overtakes: ", race.Overtakes)
+sims = 1000
+overtakes = 0
+driver_dict = {}
+for driver in drivers:
+    driver_dict[driver.Name] = [0]*(len(drivers)+1)
+for i in range(sims):
+    drivers = setup.load_drivers("dev")
+    num_laps = 50
+    race = SimRace(drivers, track, rules, num_laps)
+    race.qualify()
+    race.start()
+    for i in range(race.Laps-1):
+        race.simulate_lap()
+    for i,driver in enumerate(race.drivers_racing()):
+        driver_dict[driver.Name][i] += 1
+    for driver in [driver for driver in race.Drivers if driver.DNF]:
+        driver_dict[driver.Name][len(drivers)] += 1
+    if 'save_race' not in locals():
+        save_race = race
+    if race.leader() == "Mario":
+        save_race = race
+    overtakes += race.Overtakes
+    
+for key, val in driver_dict.items():
+    assert sum(val) == sims
 
-plt.figure(figsize=(12,7))
-for driver in race.Drivers:
-    plt.plot(race.times_to_mean(driver))
-plt.title("Race Simulation")
-plt.legend([driver.Name for driver in race.Drivers], loc='upper left', bbox_to_anchor=(1, 1))
-plt.xlabel("Lap")
-plt.ylabel("Gap to Mean (sec)")
-plt.show()
+def race_overview_plot(race):
+    # Create a figure and two subplots
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 9), gridspec_kw={'height_ratios': [2, 1]})
+
+    # Plot for Gap to Mean
+    for driver in race.Drivers:
+        laps = range(1, len(driver.LapTimes) + 1)
+        ax1.plot(laps, race.times_to_mean(driver))
+    ax1.set_title("Intervals by Lap")
+    ax1.legend([driver.Name for driver in race.Drivers], loc='upper left', bbox_to_anchor=(1, 1))
+    ax1.set_xlabel("Lap")
+    ax1.set_ylabel("Gap to Mean Laptime (sec)")
+
+    # Plot for Position
+    for driver in race.Drivers:
+        laps = range(0, len(driver.LapPositions))
+        ax2.plot(laps, driver.LapPositions)
+    ax2.set_title("Race Position by Lap")
+    ax2.set_xlabel("Lap")
+    ax2.set_ylabel("Position")
+
+    plt.tight_layout()
+    plt.show()
+
+race_overview_plot(save_race)
+
+driver_dict = dict(sorted(driver_dict.items(), key=lambda x: x[1][0], reverse=True))
+for key, val in driver_dict.items():
+    print(f"{key}: ", val)
+
+print("Avg Overtakes: ", overtakes/sims)
