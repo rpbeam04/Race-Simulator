@@ -8,6 +8,7 @@
     "Rules": {
         "Start": "standing",
         "StartFile": "double",
+        "RolloffTime": 0.5,
         "Refueling": false,
         "MandatoryPit": true,
         "MandatoryTire": 2,

@@ -2,12 +2,12 @@ import fastf1 as f1
 import pandas as pd 
 import numpy as np 
 import matplotlib.pyplot as plt
-from pprint import * 
+from pprint import pprint 
 import fetch as fetch
 
-year = 2024
-gp = "Australia"
-sessions = ["FP1","FP2","FP3","Q","R"]
+# china = f1.get_session(2024, "China", "R")
+# # china.load()
 
-test_session = fetch.get_session_data(year, gp, sessions)
-fp1 = test_session[0]
+# # laps = china.laps
+x = [1,2,3]
+print(x < 2)

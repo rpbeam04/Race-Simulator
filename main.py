@@ -6,6 +6,7 @@ from sim import SimRace
 import setup
 import matplotlib.pyplot as plt
 from pprint import pprint
+from fastf1 import plotting as f1p
 
 # Setup
 """
@@ -16,24 +17,25 @@ versus other series having 1 or 2. Also, need a track file to change certain
 parameters in the sim.
 """
 
+f1p.setup_mpl()
+
 #gui.launch()
 drivers = setup.load_drivers("dev")
 track = setup.load_track("dev")
 rules = setup.load_rules("dev")
 
 # Race Simulation
-sims = 1000
+sims = 1
 overtakes = 0
 driver_dict = {}
 for driver in drivers:
     driver_dict[driver.Name] = [0]*(len(drivers)+1)
 for i in range(sims):
     drivers = setup.load_drivers("dev")
-    num_laps = 50
+    num_laps = 5
     race = SimRace(drivers, track, rules, num_laps)
     race.qualify()
-    race.start()
-    for i in range(race.Laps-1):
+    for i in range(race.Laps):
         race.simulate_lap()
     for i,driver in enumerate(race.drivers_racing()):
         driver_dict[driver.Name][i] += 1
@@ -41,7 +43,7 @@ for i in range(sims):
         driver_dict[driver.Name][len(drivers)] += 1
     if 'save_race' not in locals():
         save_race = race
-    if race.leader() == "Mario":
+    if race.leader().Name != "Mario":
         save_race = race
     overtakes += race.Overtakes
     
