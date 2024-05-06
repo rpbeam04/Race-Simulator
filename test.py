@@ -9,5 +9,3 @@ import fetch as fetch
 # # china.load()
 
 # # laps = china.laps
-x = [1,2,3]
-print(x < 2)

@@ -25,27 +25,30 @@ track = setup.load_track("dev")
 rules = setup.load_rules("dev")
 
 # Race Simulation
-sims = 1
 overtakes = 0
+sims = 1000
 driver_dict = {}
 for driver in drivers:
     driver_dict[driver.Name] = [0]*(len(drivers)+1)
 for i in range(sims):
     drivers = setup.load_drivers("dev")
-    num_laps = 5
+    num_laps = 50
     race = SimRace(drivers, track, rules, num_laps)
     race.qualify()
-    for i in range(race.Laps):
+    for _ in range(race.Laps):
         race.simulate_lap()
-    for i,driver in enumerate(race.drivers_racing()):
-        driver_dict[driver.Name][i] += 1
+    overtakes += len(race.Overtakes)
+    for k,driver in enumerate(race.drivers_racing()):
+        driver_dict[driver.Name][k] += 1
     for driver in [driver for driver in race.Drivers if driver.DNF]:
         driver_dict[driver.Name][len(drivers)] += 1
-    if 'save_race' not in locals():
+    if i == 0:
+        print("save race init")
         save_race = race
-    if race.leader().Name != "Mario":
+    elif len(race.Overtakes) > len(save_race.Overtakes):
         save_race = race
-    overtakes += race.Overtakes
+    if i % 50 == 0:
+        print(i)
     
 for key, val in driver_dict.items():
     assert sum(val) == sims
@@ -71,13 +74,21 @@ def race_overview_plot(race):
     ax2.set_xlabel("Lap")
     ax2.set_ylabel("Position")
 
+    # Set axis limits
+    xmin, xmax = ax2.get_xlim()
+    ax1.set_xlim(xmin, xmax) 
+
     plt.tight_layout()
-    plt.show()
+    plt.savefig("save_race.png")
 
 race_overview_plot(save_race)
+
+print(f"Save race: {len(save_race.Overtakes)} overtakes")
+for overtake in save_race.Overtakes:
+    overtake.print_overtake()
 
 driver_dict = dict(sorted(driver_dict.items(), key=lambda x: x[1][0], reverse=True))
 for key, val in driver_dict.items():
     print(f"{key}: ", val)
 
-print("Avg Overtakes: ", overtakes/sims)
+print(f"Avg Overtakes: {overtakes/sims}")

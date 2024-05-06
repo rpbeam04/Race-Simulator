@@ -8,7 +8,7 @@ class SimRace():
         self.Track: dict = track
         self.Rules: dict = rules
         self.Laps: int = laps
-        self.Overtakes: int = 0
+        self.Overtakes: list['Overtake'] = []
         self.CurrentLap: int = 1 # Lap of race currently on, not last completed lap
 
     def drivers_racing(self):
@@ -38,12 +38,37 @@ class SimRace():
                 if self.Rules["Rules"]["DRS"] and not start:
                     if i > 0 and driver.RaceTime() <= self.Drivers[i-1].RaceTime(1) + 1:
                         laptime -= 0.3
-                driver.LapTimes.append(laptime)
+                if not driver.DNF:
+                    driver.LapTimes.append(laptime)
         
         drivers_racing = self.drivers_racing()
-        new_drivers = [drivers_racing[0]]
-        for driver in drivers_racing[1:]:
-            if driver.RaceTime() + self.Track["Attributes"]["OvertakingThreshold"]
+        overtakes: list['Overtake'] = []
+        overtake_thresh = self.Track["Attributes"]["OvertakingThreshold"] if self.CurrentLap != 1 else self.Track["Attributes"]["OvertakingThreshold"]/3
+        for i, driver in enumerate(drivers_racing):
+            for j, opponent in enumerate(drivers_racing[:i]):
+                if driver.RaceTime() + overtake_thresh <= opponent.RaceTime():
+                    overtakes.append(Overtake(driver, opponent, self.CurrentLap))
+
+        for i, driver in enumerate(drivers_racing):
+            attacks = [overtake for overtake in overtakes if (overtake.Overtaker == driver and not overtake.Complete)]
+            attacks.sort(key= lambda x: drivers_racing.index(x.Overtaken), reverse=True)
+            prev = [i]
+            for attack in attacks:
+                ind = drivers_racing.index(driver)
+                new_ind = drivers_racing.index(attack.Overtaken)
+                if new_ind + 1 in prev:
+                    d = drivers_racing.pop(ind)
+                    drivers_racing.insert(new_ind, d)
+                    prev.append(new_ind)
+                    attack.Complete = True
+                else:
+                    break
+           
+        self.Overtakes += [overtake for overtake in overtakes if overtake.Complete]
+
+        for i, driver in enumerate(drivers_racing[:-1]):
+            if driver.RaceTime() + self.Rules["FollowTime"] > drivers_racing[i+1].RaceTime():
+                drivers_racing[i+1].LapTimes[-1] += driver.RaceTime() + self.Rules["FollowTime"] - drivers_racing[i+1].RaceTime() + np.random.uniform(0, 0.5*drivers_racing[i+1].StdDev)
 
         self.sort_drivers()
         for i, driver in enumerate(self.drivers_racing()):
@@ -73,13 +98,18 @@ class SimRace():
 
     def sort_drivers(self):
         self.Drivers.sort(key= lambda x: sum(x.LapTimes))
+        drivers = self.drivers_racing()
         olen = len(self.Drivers)
-        dnfs = []
-        for i,driver in enumerate(self.Drivers):
-            if driver.DNF:
-                dnf_d = self.Drivers.pop(i)
-                dnfs.append(dnf_d)
-                assert(len(self.Drivers) == olen - len(dnfs)), f"{olen}, {len(self.Drivers)}"
-        dnfs.sort(key= lambda x: sum(x.LapTimes), reverse=True)
-        self.Drivers = self.Drivers + dnfs
+        dnfs = self.dnf_list()
+        self.Drivers = drivers + dnfs
         assert(len(self.Drivers) == olen), f"F {len(self.Drivers)}, {olen}"
+
+class Overtake():
+    def __init__(self, overtaker, overtaken, lap):
+        self.Overtaker: SimDriver = overtaker
+        self.Overtaken: SimDriver = overtaken
+        self.Lap: int = lap
+        self.Complete: bool = False
+
+    def print_overtake(self, advanced = False):
+        print(f"{self.Overtaker.Name} on {self.Overtaken.Name}, Lap {self.Lap}")

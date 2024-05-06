@@ -7,7 +7,7 @@
     "Country": "United Kingdom",
     "Corners": 12,
     "Attributes": {
-        "OvertakingThreshold": 1,
+        "OvertakingThreshold": 0.8,
         "Abrasiveness": 0.5,
         "DRS": 2,
         "Banking": 0,
